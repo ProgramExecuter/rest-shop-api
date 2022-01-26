@@ -23,13 +23,19 @@ router.post("/", (req, res, next) => {
   // Store this in DB
   product
     .save()
-    .then((res) => console.log(res))
-    .catch((err) => console.log(err));
+    .then((doc) => {
+      console.log(doc);
 
-  res.status(201).json({
-    message: "POST /products",
-    createdProduct: product,
-  });
+      res.status(201).json({
+        message: "New Product Added",
+        createdProduct: product,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.status(500).json({ error: err });
+    });
 });
 
 //
