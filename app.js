@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const dotenv = require("dotenv");
+const mongoose = require("mongoose");
 
 const productRoutes = require("./api/routes/products");
 const orderRoutes = require("./api/routes/orders");
@@ -29,6 +30,8 @@ app.use((req, res, next) => {
 
   next();
 });
+
+mongoose.connect(process.env.MONGOURI);
 
 // Routes for handling requests
 app.use("/products", productRoutes);
