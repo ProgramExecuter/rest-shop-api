@@ -1,9 +1,13 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const dotenv = require("dotenv");
 
 const productRoutes = require("./api/routes/products");
 const orderRoutes = require("./api/routes/orders");
+
+// Added .ENV configuration
+dotenv.config();
 
 app.use(morgan("dev"));
 app.use(express.json());
