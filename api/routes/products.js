@@ -10,6 +10,8 @@ router.get("/", (req, res, next) => {
   });
 });
 
+//
+// Add a new product
 router.post("/", (req, res, next) => {
   // Creating the new product object
   const product = new Product({
@@ -30,10 +32,21 @@ router.post("/", (req, res, next) => {
   });
 });
 
+//
+// Get a particular product
 router.get("/:productId", (req, res, next) => {
-  res.status(200).json({
-    message: `GET ${req.params.productId}`,
-  });
+  const productId = req.params.productId;
+
+  Product.findById(productId)
+    .exec()
+    .then((doc) => {
+      console.log(doc);
+      res.status(200).json(doc);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: err });
+    });
 });
 
 router.patch("/:productId", (req, res, next) => {
