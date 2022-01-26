@@ -12,6 +12,7 @@
   "author": "executer",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^14.3.2",
     "express": "^4.17.2",
     "mongoose": "^6.1.8",
     "morgan": "^1.10.0"
