@@ -4,10 +4,21 @@ const mongoose = require("mongoose");
 
 const Product = require("../models/product");
 
+//
+// Get a list of products
 router.get("/", (req, res, next) => {
-  res.status(200).json({
-    message: "GET /products",
-  });
+  Product.find()
+    .exec()
+    .then((docs) => {
+      console.log(docs);
+
+      res.status(200).json(docs);
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.status(500).json({ error: err });
+    });
 });
 
 //
