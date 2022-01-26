@@ -72,10 +72,21 @@ router.get("/:productId", (req, res, next) => {
     });
 });
 
+//
+// Edit a particular product info
 router.patch("/:productId", (req, res, next) => {
-  res.status(200).json({
-    message: `Updated product ${req.params.productId}`,
-  });
+  const productId = req.params.productId;
+
+  Product.findByIdAndUpdate(productId, req.body, { new: true })
+    .exec()
+    .then((result) => {
+      console.log(result);
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: err });
+    });
 });
 
 //
