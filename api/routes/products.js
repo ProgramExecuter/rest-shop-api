@@ -125,7 +125,7 @@ router.delete("/:productId", (req, res, next) => {
   Product.remove({ _id: productId })
     .exec()
     .then((result) => {
-      res.status(200).json(result);
+      res.status(200).json({ message: "Deleted Product Successfully" });
     })
     .catch((err) => {
       console.log(err);
