@@ -52,12 +52,18 @@ router.post("/", (req, res, next) => {
   // Store this in DB
   product
     .save()
-    .then((doc) => {
-      console.log(doc);
-
+    .then((result) => {
       res.status(201).json({
-        message: "New Product Added",
-        createdProduct: product,
+        message: "Created Product Successfully",
+        createdProduct: {
+          _id: result._id,
+          name: result.name,
+          price: result.price,
+          request: {
+            type: "GET",
+            url: `http://localhost:3000/products/${result._id}`,
+          },
+        },
       });
     })
     .catch((err) => {
