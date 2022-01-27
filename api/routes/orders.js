@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 
 const Order = require("../models/order");
+const Product = require("../models/product");
 
 //
 // Get all Orders
@@ -38,6 +39,20 @@ router.get("/", (req, res, next) => {
 //
 // Add a new Order
 router.post("/", (req, res, next) => {
+  // Check if given product exist
+  Product.findById(req.body.productId)
+    .then((product) => {
+      // If the product doesn't exist then return error
+      if (!product) {
+        res.status(404).json({ message: "Product not found" });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
+  //
+  //Reaching here means product exist
+
   // Creating the new order object
   const order = new Order({
     _id: mongoose.Types.ObjectId(),
@@ -45,6 +60,7 @@ router.post("/", (req, res, next) => {
     product: req.body.productId,
   });
 
+  // Saving new Order
   order
     .save()
     .then((result) => {
@@ -63,7 +79,7 @@ router.post("/", (req, res, next) => {
       });
     })
     .catch((err) => {
-      res.status(500).json({ error: err });
+      error: err;
     });
 });
 
