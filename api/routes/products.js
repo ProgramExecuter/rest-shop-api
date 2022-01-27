@@ -33,8 +33,6 @@ router.get("/", (req, res, next) => {
       res.status(200).json(response);
     })
     .catch((err) => {
-      console.log(err);
-
       res.status(500).json({ error: err });
     });
 });
@@ -67,8 +65,6 @@ router.post("/", (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err);
-
       res.status(500).json({ error: err });
     });
 });
@@ -79,19 +75,23 @@ router.get("/:productId", (req, res, next) => {
   const productId = req.params.productId;
 
   Product.findById(productId)
+    .select("name price _id")
     .exec()
     .then((doc) => {
-      console.log(doc);
-
       // Check if the product exist
       if (doc) {
-        res.status(200).json(doc);
+        res.status(200).json({
+          product: doc,
+          request: {
+            type: "GET",
+            url: `http://localhost:3000/products/${doc._id}`,
+          },
+        });
       } else {
         res.status(404).json({ message: "No Product Found" });
       }
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({ error: err });
     });
 });
@@ -104,11 +104,9 @@ router.patch("/:productId", (req, res, next) => {
   Product.findByIdAndUpdate(productId, req.body, { new: true })
     .exec()
     .then((result) => {
-      console.log(result);
       res.status(200).json(result);
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({ error: err });
     });
 });
