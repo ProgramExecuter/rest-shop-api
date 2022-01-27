@@ -104,7 +104,13 @@ router.patch("/:productId", (req, res, next) => {
   Product.findByIdAndUpdate(productId, req.body, { new: true })
     .exec()
     .then((result) => {
-      res.status(200).json(result);
+      res.status(200).json({
+        message: "Product Details Updated Successfully",
+        request: {
+          type: "GET",
+          url: `http://localhost:3000/products/${productId}`,
+        },
+      });
     })
     .catch((err) => {
       res.status(500).json({ error: err });
