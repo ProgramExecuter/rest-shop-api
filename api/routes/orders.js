@@ -20,7 +20,7 @@ router.get("/", (req, res, next) => {
           quantity: doc.quantity,
           request: {
             type: "GET",
-            url: `localhost:3000/orders/${doc._id}`,
+            url: `http://localhost:3000/orders/${doc._id}`,
           },
         };
       });
@@ -74,7 +74,7 @@ router.post("/", (req, res, next) => {
         },
         request: {
           type: "GET",
-          url: `localhost:3000/orders/${result._id}`,
+          url: `http://localhost:3000/orders/${result._id}`,
         },
       });
     })
@@ -83,10 +83,25 @@ router.post("/", (req, res, next) => {
     });
 });
 
+//
+// Get a particular product
 router.get("/:orderId", (req, res, next) => {
-  res.status(200).json({
-    message: `GET ${req.params.orderId}`,
-  });
+  Order.findById(req.params.orderId)
+    .select("_id product quantity")
+    .exec()
+    .then((order) => {
+      // Response structure
+      res.status(200).json({
+        order: order,
+        request: {
+          type: "GET",
+          url: `http://localhost:3000/orders/${order._id}`,
+        },
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
 });
 
 router.delete("/:orderId", (req, res, next) => {
