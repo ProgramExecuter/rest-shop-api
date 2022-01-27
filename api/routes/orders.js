@@ -90,6 +90,11 @@ router.get("/:orderId", (req, res, next) => {
     .select("_id product quantity")
     .exec()
     .then((order) => {
+      // If the order doesn't exist
+      if (!order) {
+        res.status(404).json({ error: err });
+      }
+
       // Response structure
       res.status(200).json({
         order: order,
