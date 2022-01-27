@@ -8,11 +8,29 @@ const Product = require("../models/product");
 // Get a list of products
 router.get("/", (req, res, next) => {
   Product.find()
+    .select("name price _id")
     .exec()
     .then((docs) => {
-      console.log(docs);
+      // Products structure and data
+      const products = docs.map((doc) => {
+        return {
+          name: doc.name,
+          price: doc.price,
+          _id: doc._id,
+          request: {
+            type: "GET",
+            url: `http://localhost:3000/products/${doc._id}`,
+          },
+        };
+      });
 
-      res.status(200).json(docs);
+      // Response structure and data to send
+      const response = {
+        count: docs.length,
+        products: products,
+      };
+
+      res.status(200).json(response);
     })
     .catch((err) => {
       console.log(err);
