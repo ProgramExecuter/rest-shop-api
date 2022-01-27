@@ -48,13 +48,21 @@ router.post("/", (req, res, next) => {
   order
     .save()
     .then((result) => {
-      console.log(result);
-
-      res.status(200).json(result);
+      // Response structure
+      res.status(200).json({
+        message: "New Order Received",
+        createdOrder: {
+          _id: result._id,
+          quantity: result.quantity,
+          product: result.product,
+        },
+        request: {
+          type: "GET",
+          url: `localhost:3000/orders/${result._id}`,
+        },
+      });
     })
     .catch((err) => {
-      console.log(err);
-
       res.status(500).json({ error: err });
     });
 });
