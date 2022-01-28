@@ -5,7 +5,32 @@ const multer = require("multer");
 
 const Product = require("../models/product");
 
-const upload = multer({ dest: "uploads/" });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    const newName = Date.now() + file.originalname;
+    cb(null, newName);
+  },
+});
+
+//
+// Filter types of files, and allow 'jpeg' and 'png'
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 1024 * 1024 * 5 },
+  fileFilter,
+});
+
 //
 // Get a list of products
 router.get("/", (req, res, next) => {
@@ -41,7 +66,9 @@ router.get("/", (req, res, next) => {
 
 //
 // Add a new product
-router.post("/", (req, res, next) => {
+router.post("/", upload.single("productImage"), (req, res, next) => {
+  // console.log(req.file);
+
   // Creating the new product object
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
