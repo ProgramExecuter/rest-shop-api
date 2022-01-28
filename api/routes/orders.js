@@ -89,6 +89,7 @@ router.post("/", (req, res, next) => {
 router.get("/:orderId", (req, res, next) => {
   Order.findById(req.params.orderId)
     .select("_id product quantity")
+    .populate("product", "name price")
     .exec()
     .then((order) => {
       // If the Order doesn't exist
