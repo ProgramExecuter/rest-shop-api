@@ -9,6 +9,7 @@ const Product = require("../models/product");
 // Get all Orders
 router.get("/", (req, res, next) => {
   Order.find()
+    .populate("product", "name")
     .select("product _id quantity")
     .exec()
     .then((docs) => {
