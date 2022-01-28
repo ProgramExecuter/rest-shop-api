@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const multer = require("multer");
 
 const Product = require("../models/product");
 
+const upload = multer({ dest: "uploads/" });
 //
 // Get a list of products
 router.get("/", (req, res, next) => {
