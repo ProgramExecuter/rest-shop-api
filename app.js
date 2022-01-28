@@ -10,6 +10,7 @@ const orderRoutes = require("./api/routes/orders");
 // Added .ENV configuration
 dotenv.config();
 
+app.use("/uploads", express.static("./uploads"));
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

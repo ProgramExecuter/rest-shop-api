@@ -7,7 +7,7 @@ const Product = require("../models/product");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/");
+    cb(null, "./uploads/");
   },
   filename: function (req, file, cb) {
     const newName = Date.now() + file.originalname;
@@ -35,7 +35,7 @@ const upload = multer({
 // Get a list of products
 router.get("/", (req, res, next) => {
   Product.find()
-    .select("name price _id")
+    .select("name price _id productImage")
     .exec()
     .then((docs) => {
       // Products structure and data
@@ -44,6 +44,7 @@ router.get("/", (req, res, next) => {
           name: doc.name,
           price: doc.price,
           _id: doc._id,
+          productImage: doc.productImage,
           request: {
             type: "GET",
             url: `http://localhost:3000/products/${doc._id}`,
@@ -67,13 +68,14 @@ router.get("/", (req, res, next) => {
 //
 // Add a new product
 router.post("/", upload.single("productImage"), (req, res, next) => {
-  // console.log(req.file);
+  console.log(req.file);
 
   // Creating the new product object
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
     price: req.body.price,
+    productImage: req.file.path,
   });
 
   // Store this in DB
@@ -86,6 +88,7 @@ router.post("/", upload.single("productImage"), (req, res, next) => {
           _id: result._id,
           name: result.name,
           price: result.price,
+          productImage: result.productImage,
           request: {
             type: "GET",
             url: `http://localhost:3000/products/${result._id}`,
@@ -104,7 +107,7 @@ router.get("/:productId", (req, res, next) => {
   const productId = req.params.productId;
 
   Product.findById(productId)
-    .select("name price _id")
+    .select("name price _id productImage")
     .exec()
     .then((doc) => {
       // Check if the product exist
