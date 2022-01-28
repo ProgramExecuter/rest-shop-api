@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const productRoutes = require("./api/routes/products");
 const orderRoutes = require("./api/routes/orders");
+const userRoutes = require("./api/routes/user");
 
 // Added .ENV configuration
 dotenv.config();
@@ -37,6 +38,7 @@ mongoose.connect(process.env.MONGOURI);
 // Routes for handling requests
 app.use("/products", productRoutes);
 app.use("/orders", orderRoutes);
+app.use("/user", userRoutes);
 
 // If this is reached then no file in above lines was able to handle this request
 app.use((req, res, next) => {

@@ -9,8 +9,9 @@ const User = require("../models/user");
 // Create New User(Sign Up)
 router.post("/signup", (req, res, next) => {
   // Hash the password
-  bcrypt.hash(req.body.password, (err, hash) => {
+  bcrypt.hash(req.body.password, 10, (err, hash) => {
     if (err) {
+      console.log(err);
       res.status(500).json({ error: err });
     } else {
       // If we were able to hash the password
@@ -25,9 +26,10 @@ router.post("/signup", (req, res, next) => {
         .save()
         .then((result) => {
           console.log(result);
-          res.json(201).json({ message: "User Created" });
+          res.status(201).json({ message: "User Created" });
         })
         .catch((err) => {
+          console.log(err);
           res.status(500).json({ error: err });
         });
     }
