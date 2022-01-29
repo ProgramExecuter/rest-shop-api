@@ -55,7 +55,13 @@ router.delete("/:userId", (req, res, next) => {
   User.findByIdAndDelete(req.params.userId)
     .exec()
     .then((result) => {
-      res.status(200).json({ message: "User Deleted" });
+      let message;
+      if (result == null) {
+        message = "User not found";
+      } else {
+        message = "User Deleted";
+      }
+      res.status(200).json({ message });
     })
     .catch((err) => {
       console.log(err);
