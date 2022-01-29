@@ -57,13 +57,19 @@ router.post("/login", (req, res, next) => {
   User.findOne({ email: req.body.email })
     .exec()
     .then((user) => {
+      // This email isn't registered
       if (user == null) {
         return res.status(401).json({ message: "Auth Failed" });
       }
+
+      // Compare the password with hashed password in DB
       bcrypt.compare(req.body.password, user.password, (err, result) => {
+        // If any error occured, return
         if (err) {
           return res.status(401).json({ message: "Auth Failed" });
         }
+
+        // If the password matches
         if (result) {
           return res.status(200).json({ message: "Auth Success" });
         } else {
