@@ -39,7 +39,7 @@ router.get("/", (req, res, next) => {
 
 //
 // Add a new Order
-router.post("/", (req, res, next) => {
+router.post("/", checkAuth, (req, res, next) => {
   // Check if given product exist
   Product.findById(req.body.productId)
     .then((product) => {
@@ -113,7 +113,7 @@ router.get("/:orderId", (req, res, next) => {
 
 //
 // Delete a particular order
-router.delete("/:orderId", (req, res, next) => {
+router.delete("/:orderId", checkAuth, (req, res, next) => {
   // Remove a particular product
   Order.remove({ _id: req.params.orderId })
     .exec()
