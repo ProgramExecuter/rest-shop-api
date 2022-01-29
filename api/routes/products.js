@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require("multer");
+const checkAuth = require("../middleware/checkAuth");
 
 const Product = require("../models/product");
 
@@ -67,7 +68,7 @@ router.get("/", (req, res, next) => {
 
 //
 // Add a new product
-router.post("/", upload.single("productImage"), (req, res, next) => {
+router.post("/", checkAuth, upload.single("productImage"), (req, res, next) => {
   console.log(req.file);
 
   // Creating the new product object
@@ -97,6 +98,7 @@ router.post("/", upload.single("productImage"), (req, res, next) => {
       });
     })
     .catch((err) => {
+      console.log(err);
       res.status(500).json({ error: err });
     });
 });
@@ -130,7 +132,7 @@ router.get("/:productId", (req, res, next) => {
 
 //
 // Edit a particular product info
-router.patch("/:productId", (req, res, next) => {
+router.patch("/:productId", checkAuth, (req, res, next) => {
   const productId = req.params.productId;
 
   Product.findByIdAndUpdate(productId, req.body, { new: true })
@@ -151,7 +153,7 @@ router.patch("/:productId", (req, res, next) => {
 
 //
 // Delete a particular product
-router.delete("/:productId", (req, res, next) => {
+router.delete("/:productId", checkAuth, (req, res, next) => {
   const productId = req.params.productId;
 
   Product.remove({ _id: productId })
