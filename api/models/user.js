@@ -6,6 +6,7 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     unique: true, // Not for validation  &&  for optimization
+    match: /^\S+@\S+\.\S+$/,
   },
   password: {
     type: String,
