@@ -7,9 +7,12 @@ const checkAuth = require("../middleware/checkAuth");
 const Product = require("../models/product");
 
 const storage = multer.diskStorage({
+  // Save the images in ./uploads folder
   destination: function (req, file, cb) {
     cb(null, "./uploads/");
   },
+
+  // File name assignment
   filename: function (req, file, cb) {
     const newName = Date.now() + file.originalname;
     cb(null, newName);
@@ -28,6 +31,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage,
+  // Images <= 5MB are saved
   limits: { fileSize: 1024 * 1024 * 5 },
   fileFilter,
 });
@@ -35,6 +39,7 @@ const upload = multer({
 //
 // Get a list of products
 router.get("/", (req, res, next) => {
+  // Fetch all products from DB
   Product.find()
     .select("name price _id productImage")
     .exec()
@@ -62,6 +67,8 @@ router.get("/", (req, res, next) => {
       res.status(200).json(response);
     })
     .catch((err) => {
+      console.log(err);
+
       res.status(500).json({ error: err });
     });
 });
@@ -69,8 +76,6 @@ router.get("/", (req, res, next) => {
 //
 // Add a new product
 router.post("/", checkAuth, upload.single("productImage"), (req, res, next) => {
-  console.log(req.file);
-
   // Creating the new product object
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
@@ -99,6 +104,7 @@ router.post("/", checkAuth, upload.single("productImage"), (req, res, next) => {
     })
     .catch((err) => {
       console.log(err);
+
       res.status(500).json({ error: err });
     });
 });
@@ -106,9 +112,9 @@ router.post("/", checkAuth, upload.single("productImage"), (req, res, next) => {
 //
 // Get a particular product
 router.get("/:productId", (req, res, next) => {
-  const productId = req.params.productId;
-
-  Product.findById(productId)
+  // Fetch the product from DB
+  Product.findById(req.params.productId)
+    // Only forward 'price', '_id' and 'productImage'
     .select("name price _id productImage")
     .exec()
     .then((doc) => {
@@ -126,6 +132,8 @@ router.get("/:productId", (req, res, next) => {
       }
     })
     .catch((err) => {
+      console.log(err);
+
       res.status(500).json({ error: err });
     });
 });
@@ -135,6 +143,7 @@ router.get("/:productId", (req, res, next) => {
 router.patch("/:productId", checkAuth, (req, res, next) => {
   const productId = req.params.productId;
 
+  // Update the product in DB
   Product.findByIdAndUpdate(productId, req.body, { new: true })
     .exec()
     .then((result) => {
@@ -147,6 +156,8 @@ router.patch("/:productId", checkAuth, (req, res, next) => {
       });
     })
     .catch((err) => {
+      console.log(err);
+
       res.status(500).json({ error: err });
     });
 });
@@ -154,15 +165,15 @@ router.patch("/:productId", checkAuth, (req, res, next) => {
 //
 // Delete a particular product
 router.delete("/:productId", checkAuth, (req, res, next) => {
-  const productId = req.params.productId;
-
-  Product.remove({ _id: productId })
+  // Delete product from DB
+  Product.findByIdAndDelete(req.params.productId)
     .exec()
     .then((result) => {
       res.status(200).json({ message: "Deleted Product Successfully" });
     })
     .catch((err) => {
       console.log(err);
+
       res.status(500).json({ error: err });
     });
 });

@@ -23,6 +23,7 @@ router.post("/signup", (req, res, next) => {
       bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
           console.log(err);
+
           res.status(500).json({ error: err });
         } else {
           // If we were able to hash the password
@@ -33,14 +34,15 @@ router.post("/signup", (req, res, next) => {
             password: hash,
           });
 
+          // Save the user in DB
           user
             .save()
             .then((result) => {
-              console.log(result);
               res.status(201).json({ message: "User Created" });
             })
             .catch((err) => {
               console.log(err);
+
               res.status(500).json({ error: err });
             });
         }
@@ -48,6 +50,7 @@ router.post("/signup", (req, res, next) => {
     })
     .catch((err) => {
       console.log(err);
+
       res.status(500).json({ error: err });
     });
 });
@@ -55,6 +58,7 @@ router.post("/signup", (req, res, next) => {
 //
 // Sign In user
 router.post("/login", (req, res, next) => {
+  // Find if a user is registered with this email
   User.findOne({ email: req.body.email })
     .exec()
     .then((user) => {
@@ -62,6 +66,8 @@ router.post("/login", (req, res, next) => {
       if (user == null) {
         return res.status(401).json({ message: "Auth Failed" });
       }
+
+      // Email is registered
 
       // Compare the password with hashed password in DB
       bcrypt.compare(req.body.password, user.password, (err, result) => {
@@ -78,9 +84,8 @@ router.post("/login", (req, res, next) => {
               userId: user._id,
             },
             process.env.JWT_KEY,
-            {
-              expiresIn: "1h",
-            }
+            // Expire this token after '1 Hour'
+            { expiresIn: "1h" }
           );
           return res.status(200).json({ message: "Auth Success", token });
         } else {
@@ -90,6 +95,7 @@ router.post("/login", (req, res, next) => {
     })
     .catch((err) => {
       console.log(err);
+
       res.status(500).json({ error: err });
     });
 });
@@ -97,19 +103,23 @@ router.post("/login", (req, res, next) => {
 //
 // Delete a particular User
 router.delete("/:userId", (req, res, next) => {
+  // Delete user from DB
   User.findByIdAndDelete(req.params.userId)
     .exec()
     .then((result) => {
       let message;
+
       if (result == null) {
         message = "User not found";
       } else {
         message = "User Deleted";
       }
+
       res.status(200).json({ message });
     })
     .catch((err) => {
       console.log(err);
+
       res.status(500).json({ error: err });
     });
 });

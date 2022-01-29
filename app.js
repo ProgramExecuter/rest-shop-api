@@ -11,8 +11,13 @@ const userRoutes = require("./api/routes/user");
 // Added .ENV configuration
 dotenv.config();
 
+// Added path for saving images and accessing them
 app.use("/uploads", express.static("./uploads"));
+
+// Config for logging request to API
 app.use(morgan("dev"));
+
+// JSON parsing from request
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -33,6 +38,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// Connect MongoDB
 mongoose.connect(process.env.MONGOURI);
 
 // Routes for handling requests
@@ -50,6 +56,7 @@ app.use((req, res, next) => {
 // This handles all errors thrown by some operations
 app.use((error, req, res, next) => {
   res.status(error.status);
+
   res.json({
     error: {
       message: error.message,

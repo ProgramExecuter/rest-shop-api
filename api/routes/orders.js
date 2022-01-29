@@ -9,6 +9,7 @@ const checkAuth = require("../middleware/checkAuth");
 //
 // Get all Orders
 router.get("/", checkAuth, (req, res, next) => {
+  // get all the orders from DB
   Order.find()
     .populate("product", "name")
     .select("product _id quantity")
@@ -34,6 +35,8 @@ router.get("/", checkAuth, (req, res, next) => {
       });
     })
     .catch((err) => {
+      console.log(err);
+
       res.status(500).json({ error: err });
     });
 });
@@ -50,10 +53,12 @@ router.post("/", checkAuth, (req, res, next) => {
       }
     })
     .catch((err) => {
+      console.log(err);
+
       res.status(500).json({ error: err });
     });
-  //
-  //Reaching here means product exist
+
+  //Reaching here means product exists
 
   // Creating the new order object
   const order = new Order({
@@ -81,13 +86,16 @@ router.post("/", checkAuth, (req, res, next) => {
       });
     })
     .catch((err) => {
-      error: err;
+      console.log(err);
+
+      res.status(500).json({ error: err });
     });
 });
 
 //
 // Get a particular product
 router.get("/:orderId", checkAuth, (req, res, next) => {
+  // Fetch the order from DB
   Order.findById(req.params.orderId)
     .select("_id product quantity")
     .populate("product", "name price")
@@ -108,6 +116,8 @@ router.get("/:orderId", checkAuth, (req, res, next) => {
       });
     })
     .catch((err) => {
+      console.log(err);
+
       res.status(500).json({ error: err });
     });
 });
@@ -115,13 +125,15 @@ router.get("/:orderId", checkAuth, (req, res, next) => {
 //
 // Delete a particular order
 router.delete("/:orderId", checkAuth, (req, res, next) => {
-  // Remove a particular product
+  // Remove a particular product from DB
   Order.remove({ _id: req.params.orderId })
     .exec()
     .then((result) => {
       res.status(200).json({ message: "Order Cancelled Successfully" });
     })
     .catch((err) => {
+      console.log(err);
+
       res.status(500).json({ error: err });
     });
 });
