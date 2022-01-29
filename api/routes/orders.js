@@ -7,7 +7,7 @@ const Product = require("../models/product");
 
 //
 // Get all Orders
-router.get("/", (req, res, next) => {
+router.get("/", checkAuth, (req, res, next) => {
   Order.find()
     .populate("product", "name")
     .select("product _id quantity")
@@ -86,7 +86,7 @@ router.post("/", checkAuth, (req, res, next) => {
 
 //
 // Get a particular product
-router.get("/:orderId", (req, res, next) => {
+router.get("/:orderId", checkAuth, (req, res, next) => {
   Order.findById(req.params.orderId)
     .select("_id product quantity")
     .populate("product", "name price")
