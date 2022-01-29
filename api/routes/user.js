@@ -14,36 +14,36 @@ router.post("/signup", (req, res, next) => {
       if (user.length >= 1) {
         // this 'email' is registered
         return res.status(422).json({ message: "Email already registered" });
-      } else {
-        // If this 'email' isn't registered
-
-        // Hash the password
-        bcrypt.hash(req.body.password, 10, (err, hash) => {
-          if (err) {
-            console.log(err);
-            res.status(500).json({ error: err });
-          } else {
-            // If we were able to hash the password
-            // then create new User
-            const user = new User({
-              _id: new mongoose.Types.ObjectId(),
-              email: req.body.email,
-              password: hash,
-            });
-
-            user
-              .save()
-              .then((result) => {
-                console.log(result);
-                res.status(201).json({ message: "User Created" });
-              })
-              .catch((err) => {
-                console.log(err);
-                res.status(500).json({ error: err });
-              });
-          }
-        });
       }
+
+      // If this 'email' isn't registered
+
+      // Hash the password
+      bcrypt.hash(req.body.password, 10, (err, hash) => {
+        if (err) {
+          console.log(err);
+          res.status(500).json({ error: err });
+        } else {
+          // If we were able to hash the password
+          // then create new User
+          const user = new User({
+            _id: new mongoose.Types.ObjectId(),
+            email: req.body.email,
+            password: hash,
+          });
+
+          user
+            .save()
+            .then((result) => {
+              console.log(result);
+              res.status(201).json({ message: "User Created" });
+            })
+            .catch((err) => {
+              console.log(err);
+              res.status(500).json({ error: err });
+            });
+        }
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -51,6 +51,34 @@ router.post("/signup", (req, res, next) => {
     });
 });
 
+//
+// Sign In user
+router.post("/login", (req, res, next) => {
+  User.findOne({ email: req.body.email })
+    .exec()
+    .then((user) => {
+      if (user == null) {
+        return res.status(401).json({ message: "Auth Failed" });
+      }
+      bcrypt.compare(req.body.password, user.password, (err, result) => {
+        if (err) {
+          return res.status(401).json({ message: "Auth Failed" });
+        }
+        if (result) {
+          return res.status(200).json({ message: "Auth Success" });
+        } else {
+          return res.status(401).json({ message: "Auth Failed" });
+        }
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: err });
+    });
+});
+
+//
+// Delete a particular User
 router.delete("/:userId", (req, res, next) => {
   User.findByIdAndDelete(req.params.userId)
     .exec()
