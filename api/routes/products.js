@@ -11,6 +11,7 @@ const {
   getAllProducts,
   addNewProduct,
   getParticularProduct,
+  editProduct,
 } = require("../controllers/products");
 
 const storage = multer.diskStorage({
@@ -57,27 +58,7 @@ router.get("/:productId", getParticularProduct);
 
 //
 // Edit a particular product info
-router.patch("/:productId", checkAuth, (req, res, next) => {
-  const productId = req.params.productId;
-
-  // Update the product in DB
-  Product.findByIdAndUpdate(productId, req.body, { new: true })
-    .exec()
-    .then((result) => {
-      res.status(200).json({
-        message: "Product Details Updated Successfully",
-        request: {
-          type: "GET",
-          url: `http://localhost:3000/products/${productId}`,
-        },
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-
-      res.status(500).json({ error: err });
-    });
-});
+router.patch("/:productId", checkAuth, editProduct);
 
 //
 // Delete a particular product

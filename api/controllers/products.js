@@ -77,6 +77,9 @@ const addNewProduct = (req, res, next) => {
     });
 };
 
+///
+// GET A PRODUCT
+///
 const getParticularProduct = (req, res, next) => {
   // Fetch the product from DB
   Product.findById(req.params.productId)
@@ -104,8 +107,34 @@ const getParticularProduct = (req, res, next) => {
     });
 };
 
+///
+// EDIT A PRODUCT
+///
+const editProduct = (req, res, next) => {
+  const productId = req.params.productId;
+
+  // Update the product in DB
+  Product.findByIdAndUpdate(productId, req.body, { new: true })
+    .exec()
+    .then((result) => {
+      res.status(200).json({
+        message: "Product Details Updated Successfully",
+        request: {
+          type: "GET",
+          url: `http://localhost:3000/products/${productId}`,
+        },
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.status(500).json({ error: err });
+    });
+};
+
 module.exports = {
   getAllProducts,
   addNewProduct,
   getParticularProduct,
+  editProduct,
 };
