@@ -6,7 +6,7 @@ const checkAuth = require("../middleware/checkAuth");
 
 const Product = require("../models/product");
 
-const { getAllProducts } = require("../controllers/products");
+const { getAllProducts, addNewProduct } = require("../controllers/products");
 
 const storage = multer.diskStorage({
   // Save the images in ./uploads folder
@@ -44,39 +44,7 @@ router.get("/", getAllProducts);
 
 //
 // Add a new product
-router.post("/", checkAuth, upload.single("productImage"), (req, res, next) => {
-  // Creating the new product object
-  const product = new Product({
-    _id: new mongoose.Types.ObjectId(),
-    name: req.body.name,
-    price: req.body.price,
-    productImage: req.file.path,
-  });
-
-  // Store this in DB
-  product
-    .save()
-    .then((result) => {
-      res.status(201).json({
-        message: "Created Product Successfully",
-        createdProduct: {
-          _id: result._id,
-          name: result.name,
-          price: result.price,
-          productImage: result.productImage,
-          request: {
-            type: "GET",
-            url: `http://localhost:3000/products/${result._id}`,
-          },
-        },
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-
-      res.status(500).json({ error: err });
-    });
-});
+router.post("/", checkAuth, upload.single("productImage"), addNewProduct);
 
 //
 // Get a particular product
