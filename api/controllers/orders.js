@@ -85,7 +85,36 @@ const addNewOrder = (req, res, next) => {
     });
 };
 
+const getParticularProduct = (req, res, next) => {
+  // Fetch the order from DB
+  Order.findById(req.params.orderId)
+    .select("_id product quantity")
+    .populate("product", "name price")
+    .exec()
+    .then((order) => {
+      // If the Order doesn't exist
+      if (!order) {
+        res.status(404).json({ message: "Order not found" });
+      }
+
+      // Response structure
+      res.status(200).json({
+        order: order,
+        request: {
+          type: "GET",
+          url: `http://localhost:3000/orders/${order._id}`,
+        },
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.status(500).json({ error: err });
+    });
+};
+
 module.exports = {
   getAllOrders,
   addNewOrder,
+  getParticularProduct,
 };
