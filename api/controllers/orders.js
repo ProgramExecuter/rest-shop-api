@@ -113,8 +113,23 @@ const getParticularProduct = (req, res, next) => {
     });
 };
 
+const deleteOrder = (req, res, next) => {
+  // Remove a particular product from DB
+  Order.remove({ _id: req.params.orderId })
+    .exec()
+    .then((result) => {
+      res.status(200).json({ message: "Order Cancelled Successfully" });
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.status(500).json({ error: err });
+    });
+};
+
 module.exports = {
   getAllOrders,
   addNewOrder,
   getParticularProduct,
+  deleteOrder,
 };

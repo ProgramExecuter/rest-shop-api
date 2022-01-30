@@ -11,6 +11,7 @@ const {
   getAllOrders,
   addNewOrder,
   getParticularProduct,
+  deleteOrder,
 } = require("../controllers/orders");
 
 //
@@ -27,18 +28,6 @@ router.get("/:orderId", checkAuth, getParticularProduct);
 
 //
 // Delete a particular order
-router.delete("/:orderId", checkAuth, (req, res, next) => {
-  // Remove a particular product from DB
-  Order.remove({ _id: req.params.orderId })
-    .exec()
-    .then((result) => {
-      res.status(200).json({ message: "Order Cancelled Successfully" });
-    })
-    .catch((err) => {
-      console.log(err);
-
-      res.status(500).json({ error: err });
-    });
-});
+router.delete("/:orderId", checkAuth, deleteOrder);
 
 module.exports = router;
