@@ -132,9 +132,27 @@ const editProduct = (req, res, next) => {
     });
 };
 
+///
+// DELETE PRODUCT
+///
+const deleteProduct = (req, res, next) => {
+  // Delete product from DB
+  Product.findByIdAndDelete(req.params.productId)
+    .exec()
+    .then((result) => {
+      res.status(200).json({ message: "Deleted Product Successfully" });
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.status(500).json({ error: err });
+    });
+};
+
 module.exports = {
   getAllProducts,
   addNewProduct,
   getParticularProduct,
   editProduct,
+  deleteProduct,
 };

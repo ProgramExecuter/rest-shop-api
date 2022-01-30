@@ -12,6 +12,7 @@ const {
   addNewProduct,
   getParticularProduct,
   editProduct,
+  deleteProduct,
 } = require("../controllers/products");
 
 const storage = multer.diskStorage({
@@ -62,18 +63,6 @@ router.patch("/:productId", checkAuth, editProduct);
 
 //
 // Delete a particular product
-router.delete("/:productId", checkAuth, (req, res, next) => {
-  // Delete product from DB
-  Product.findByIdAndDelete(req.params.productId)
-    .exec()
-    .then((result) => {
-      res.status(200).json({ message: "Deleted Product Successfully" });
-    })
-    .catch((err) => {
-      console.log(err);
-
-      res.status(500).json({ error: err });
-    });
-});
+router.delete("/:productId", checkAuth, deleteProduct);
 
 module.exports = router;
