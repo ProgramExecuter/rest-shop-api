@@ -3,6 +3,9 @@ const mongoose = require("mongoose");
 const Order = require("../models/order");
 const Product = require("../models/product");
 
+///
+// GET ALL ORDERS
+///
 const getAllOrders = (req, res, next) => {
   // get all the orders from DB
   Order.find()
@@ -36,6 +39,9 @@ const getAllOrders = (req, res, next) => {
     });
 };
 
+///
+// ADD NEW ORDER
+///
 const addNewOrder = (req, res, next) => {
   // Check if given product exist
   Product.findById(req.body.productId)
@@ -85,6 +91,9 @@ const addNewOrder = (req, res, next) => {
     });
 };
 
+///
+// GET SINGLE ORDER
+///
 const getParticularProduct = (req, res, next) => {
   // Fetch the order from DB
   Order.findById(req.params.orderId)
@@ -113,6 +122,9 @@ const getParticularProduct = (req, res, next) => {
     });
 };
 
+///
+// DELETE A ORDER
+///
 const deleteOrder = (req, res, next) => {
   // Remove a particular product from DB
   Order.remove({ _id: req.params.orderId })
