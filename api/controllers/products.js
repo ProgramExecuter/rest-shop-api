@@ -77,7 +77,35 @@ const addNewProduct = (req, res, next) => {
     });
 };
 
+const getParticularProduct = (req, res, next) => {
+  // Fetch the product from DB
+  Product.findById(req.params.productId)
+    // Only forward 'price', '_id' and 'productImage'
+    .select("name price _id productImage")
+    .exec()
+    .then((doc) => {
+      // Check if the product exist
+      if (doc) {
+        res.status(200).json({
+          product: doc,
+          request: {
+            type: "GET",
+            url: `http://localhost:3000/products/${doc._id}`,
+          },
+        });
+      } else {
+        res.status(404).json({ message: "No Product Found" });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.status(500).json({ error: err });
+    });
+};
+
 module.exports = {
   getAllProducts,
   addNewProduct,
+  getParticularProduct,
 };

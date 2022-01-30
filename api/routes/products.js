@@ -6,7 +6,12 @@ const checkAuth = require("../middleware/checkAuth");
 
 const Product = require("../models/product");
 
-const { getAllProducts, addNewProduct } = require("../controllers/products");
+// Import Controllers
+const {
+  getAllProducts,
+  addNewProduct,
+  getParticularProduct,
+} = require("../controllers/products");
 
 const storage = multer.diskStorage({
   // Save the images in ./uploads folder
@@ -48,32 +53,7 @@ router.post("/", checkAuth, upload.single("productImage"), addNewProduct);
 
 //
 // Get a particular product
-router.get("/:productId", (req, res, next) => {
-  // Fetch the product from DB
-  Product.findById(req.params.productId)
-    // Only forward 'price', '_id' and 'productImage'
-    .select("name price _id productImage")
-    .exec()
-    .then((doc) => {
-      // Check if the product exist
-      if (doc) {
-        res.status(200).json({
-          product: doc,
-          request: {
-            type: "GET",
-            url: `http://localhost:3000/products/${doc._id}`,
-          },
-        });
-      } else {
-        res.status(404).json({ message: "No Product Found" });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-
-      res.status(500).json({ error: err });
-    });
-});
+router.get("/:productId", getParticularProduct);
 
 //
 // Edit a particular product info
