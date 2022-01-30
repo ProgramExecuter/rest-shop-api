@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
+
 ///
 // SIGNUP USER
 ///
@@ -53,6 +54,9 @@ const signUp = (req, res, next) => {
     });
 };
 
+///
+// LOGIN USER
+///
 const userLogin = (req, res, next) => {
   // Find if a user is registered with this email
   User.findOne({ email: req.body.email })
@@ -96,7 +100,33 @@ const userLogin = (req, res, next) => {
     });
 };
 
+///
+// DELETE A USER
+///
+const deleteUser = (req, res, next) => {
+  // Delete user from DB
+  User.findByIdAndDelete(req.params.userId)
+    .exec()
+    .then((result) => {
+      let message;
+
+      if (result == null) {
+        message = "User not found";
+      } else {
+        message = "User Deleted";
+      }
+
+      res.status(200).json({ message });
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.status(500).json({ error: err });
+    });
+};
+
 module.exports = {
   signUp,
   userLogin,
+  deleteUser,
 };
