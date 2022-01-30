@@ -7,7 +7,7 @@ const Product = require("../models/product");
 const checkAuth = require("../middleware/checkAuth");
 
 // Import Controllers
-const { getAllOrders } = require("../controllers/orders");
+const { getAllOrders, addNewOrder } = require("../controllers/orders");
 
 //
 // Get all Orders
@@ -15,54 +15,7 @@ router.get("/", checkAuth, getAllOrders);
 
 //
 // Add a new Order
-router.post("/", checkAuth, (req, res, next) => {
-  // Check if given product exist
-  Product.findById(req.body.productId)
-    .then((product) => {
-      // If the product doesn't exist then return error
-      if (!product) {
-        res.status(404).json({ message: "Product not found" });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-
-      res.status(500).json({ error: err });
-    });
-
-  //Reaching here means product exists
-
-  // Creating the new order object
-  const order = new Order({
-    _id: mongoose.Types.ObjectId(),
-    quantity: req.body.quantity,
-    product: req.body.productId,
-  });
-
-  // Saving new Order
-  order
-    .save()
-    .then((result) => {
-      // Response structure
-      res.status(200).json({
-        message: "New Order Received",
-        createdOrder: {
-          _id: result._id,
-          quantity: result.quantity,
-          product: result.product,
-        },
-        request: {
-          type: "GET",
-          url: `http://localhost:3000/orders/${result._id}`,
-        },
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-
-      res.status(500).json({ error: err });
-    });
-});
+router.post("/", checkAuth, addNewOrder);
 
 //
 // Get a particular product
